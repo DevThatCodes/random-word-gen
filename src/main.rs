@@ -134,7 +134,7 @@ fn main() {
             tries += 1;
         }
         let time_finished = stopwatch.elapsed();
-        println!("\n Got target word \'{target_word}\' as \'{result}\' in {tries} tries, which took {:.2?}!", time_finished);
+        println!("\n\n Got target word \'{target_word}\' as \'{result}\' in {tries} tries, which took {:.2?}!\n", time_finished);
     } else {
         result = generate_word(wordlen, max_vowels_in_a_row, max_consonants_in_a_row, consonant_mutation_chance, vowel_mutation_chance).0; 
     }
