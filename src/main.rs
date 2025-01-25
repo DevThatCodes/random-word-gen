@@ -1,5 +1,5 @@
 
-use std::{env, time::{Instant, Duration}};
+use std::{env, time::{Duration, Instant}};
 
 
 use rand::{thread_rng, Rng};
@@ -17,8 +17,8 @@ enum LetterTypes {
 
 fn generate_word(wordlen: i32, max_vowels_in_a_row: i32, max_consonants_in_a_row: i32, consonant_mutation_chance: i32, vowel_mutation_chance: i32) -> (String, Duration)  {
     // variables related to word making
-    let consonants = ["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z", "r", "s", "t", "l", "n"];
-    let vowels = ["a","e","i","o","u"];
+    let consonants = ["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z", "r", "s", "t", "l", "n", "c", "d", "f", "g", "h", "l", "m", "n", "p", "r", "s","t","w", "h", "r", "s", "t", "r", "s", "t", "l"];
+    let vowels = ["a","e","i","o","u", "e", "a", "o", "i", "e"];
     let mut word = String::new();
     let mut i = 0;
     let mut last_letter_type : LetterTypes = LetterTypes::None;
@@ -51,7 +51,7 @@ fn generate_word(wordlen: i32, max_vowels_in_a_row: i32, max_consonants_in_a_row
                 continue;
             }
 
-            if rand(consonant_mutation_chance) == 1 {
+            if rand(consonant_mutation_chance - (streak.pow(max_consonants_in_a_row.try_into().unwrap()))) == 1 {
                 streak = 0;
                 word += "C";
                 last_letter_type = LetterTypes::Consonant;
@@ -71,7 +71,7 @@ fn generate_word(wordlen: i32, max_vowels_in_a_row: i32, max_consonants_in_a_row
                 continue;
             }
 
-            if rand(vowel_mutation_chance) == 1 {
+            if rand(vowel_mutation_chance - (streak.pow(max_vowels_in_a_row.try_into().unwrap()))) == 1 {
                 streak = 0;
                 word += "V";
                 last_letter_type = LetterTypes::Vowel;
@@ -117,22 +117,22 @@ fn main() {
     
     // word settings
     let max_vowels_in_a_row = 2;
-    let max_consonants_in_a_row = 3;
+    let max_consonants_in_a_row = 4;
     let consonant_mutation_chance = 4; // chance for something to become a consonant ( 1 in ? )
     let vowel_mutation_chance = 3; // chance for something to become a vowel ( 1 in ? )
     
     let mut result : (String, Duration) = (String::new(), Duration::new(0, 0));
-    let mut time_taken : Duration = Duration::new(0, 0);
 
     if !target_word.is_empty() {
         // start timer
         let mut tries = 0;
+        let stopwatch = Instant::now();
         while result.0 != target_word {
             result = generate_word(wordlen, max_vowels_in_a_row, max_consonants_in_a_row, consonant_mutation_chance, vowel_mutation_chance);
             print!("{} | ", result.0);
             tries += 1;
-            time_taken += result.1;
         }
+        let time_taken = stopwatch.elapsed();
         println!("\n\n Got target word \'{}\' in {tries} tries, which took {:.2?}!\n", result.0, time_taken);
     } else {
         result = generate_word(wordlen, max_vowels_in_a_row, max_consonants_in_a_row, consonant_mutation_chance, vowel_mutation_chance); 
